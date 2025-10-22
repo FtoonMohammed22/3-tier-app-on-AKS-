@@ -1,0 +1,67 @@
+{
+  "version": 4,
+  "terraform_version": "1.13.3",
+  "serial": 291,
+  "lineage": "69b8c150-2935-0851-6b3a-bb21fc7173f4",
+  "outputs": {
+    "jwt_secret_key": {
+      "value": "ThisIsALongRandomSecretKeyForJWTAuth",
+      "type": "string",
+      "sensitive": true
+    },
+    "sql_admin_password": {
+      "value": "MyStrongSQLPassword@2025!",
+      "type": "string",
+      "sensitive": true
+    }
+  },
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "azurerm_mssql_server",
+      "name": "sql_server",
+      "provider": "provider[\"registry.terraform.io/hashicorp/azurerm\"]",
+      "instances": [
+        {
+          "status": "tainted",
+          "schema_version": 0,
+          "attributes": {
+            "administrator_login": "ftoon",
+            "administrator_login_password": "MyStrongSQLPassword@2025!",
+            "azuread_administrator": [],
+            "connection_policy": "Default",
+            "fully_qualified_domain_name": null,
+            "id": "/subscriptions/80646857-9142-494b-90c5-32fea6acbc41/resourceGroups/ecomm-ftoon-devops-rg/providers/Microsoft.Sql/servers/ecomm-ftoon-devops-sqlserver",
+            "identity": [],
+            "location": "australiaeast",
+            "minimum_tls_version": "1.2",
+            "name": "ecomm-ftoon-devops-sqlserver",
+            "outbound_network_restriction_enabled": false,
+            "primary_user_assigned_identity_id": null,
+            "public_network_access_enabled": false,
+            "resource_group_name": "ecomm-ftoon-devops-rg",
+            "restorable_dropped_database_ids": null,
+            "tags": null,
+            "timeouts": null,
+            "transparent_data_encryption_key_vault_key_id": null,
+            "version": "12.0"
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "administrator_login_password"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjozNjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjMwMDAwMDAwMDAwMCwidXBkYXRlIjozNjAwMDAwMDAwMDAwfX0=",
+          "dependencies": [
+            "azurerm_resource_group.rg"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

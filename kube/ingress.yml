@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-ingress
+  namespace: ecommerce-devops
+  annotations:
+    # ❌ حذفنا قاعدة الـ Rewrite تماماً.
+    # NGINX سيستخدم /api/products بالكامل.
+    # سنستخدم PathType: Prefix بدلاً من ImplementationSpecific لتجنب مشاكل RegEx
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/use-regex: "false" # سنلغي الـ RegEx
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      # Backend API routes: سنرسل المسار /api/ بالكامل.
+      - path: /api
+        pathType: Prefix # ✅ استخدام Prefix للوضوح
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 80
+      # Frontend routes (توجيه أي طلب آخر إلى الـ Frontend)
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80

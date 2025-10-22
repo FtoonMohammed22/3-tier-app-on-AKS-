@@ -1,0 +1,71 @@
+name: CD - Deploy to AKS Cluster
+
+on:
+
+  push:
+    branches:
+      - main
+    paths:
+      - 'kube/**' 
+      
+env:
+  RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }} 
+  AKS_CLUSTER_NAME: ${{ secrets.AZURE_AKS_NAME }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 1. Checkout Repository
+      uses: actions/checkout@v4
+
+
+
+
+    - name: 2. Azure Login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+
+
+
+    - name: 3. Get AKS Credentials
+      uses: azure/aks-set-context@v4
+      with:
+        resource-group: ${{ env.RESOURCE_GROUP }}
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+
+
+    - name: 4. Apply Configuration (Secrets and ConfigMaps)
+      run: |
+        kubectl apply -f kube/backend/configmap.yaml -n ecommerce-devops
+        kubectl apply -f kube/backend/secret.yaml -n ecommerce-devops
+        # يجب أن يكون الـ Namespace موجودًا
+        
+
+    - name: 5. Deploy Kubernetes Manifests
+      uses: azure/k8s-deploy@v5
+      with:
+        manifests: |
+          kube/backend/service.yaml
+          kube/backend/deployment.yaml
+          kube/frontend/service.yaml
+          kube/frontend/deployment.yaml
+          kube/ingress.yaml
+        namespace: ecommerce-devops 
+
+  
+    - name: 6. Force Update Deployments (Rollout Restart)
+      run: |
+        # هذا يضمن أن Pods ستحاول سحب صورة 'latest' من Docker Hub مرة أخرى
+        kubectl rollout restart deployment backend -n ecommerce-devops
+        kubectl rollout restart deployment frontend -n ecommerce-devops
+        
+    - name: 7. Wait for Rollout to Finish
+      run: |
+        kubectl rollout status deployment backend -n ecommerce-devops --timeout=5m
+        kubectl rollout status deployment frontend -n ecommerce-devops --timeout=5m

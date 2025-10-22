@@ -1,0 +1,10 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[branch "main"]
+	vscode-merge-base = origin/main
+[remote "origin"]
+	url = https://github.com/FtoonMohammed22/3-tier-app-on-AKS-.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
